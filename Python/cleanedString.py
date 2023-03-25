@@ -10,7 +10,7 @@ string="%I $am@% a %tea@cher%, &and& I lo%#ve %te@a@ching%;. The@re $is no@th@in
 cleanString=sub(r"[^\w^\s]", "", string) #Removes any character that is not alphanum or whitespace
 
 print(cleanString)
-wordCount=Counter([_ for _ in cleanString.split(" ")]) #Dictionary of count of words
+wordCount=Counter(cleanString.split()) #Dictionary of count of words
 
 word=[_ for _,count in wordCount.items() if count==max(wordCount.values())] #List of word(s) with most count
 
