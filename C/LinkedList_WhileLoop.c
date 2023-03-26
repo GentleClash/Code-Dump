@@ -15,7 +15,7 @@ struct node *current=NULL; //Always set to current node
 struct node *temp=NULL; //Will use while displaying content
 
 struct node* createNode( int year ); //To create new nodes
-void addNode( struct node* newNode );//To add new node at end of current node
+void addNode( struct node* newNode );//To add new node at end of current list
 void addAtPosition(struct node* newNode, int position );//To add new node at a given position
 void deleteNode( int position );//To delete node from provided position
 void displayLinkedList( struct node *start );//To display the nodes
@@ -137,7 +137,7 @@ void addAtPosition(struct node* newNode, int position ){
 
     if (position==1){
         newNode->next=start->next;
-        start->next=newNode;
+        start=newNode;
     }
     else{
         for(int i=1; i< position-1; ++i){
