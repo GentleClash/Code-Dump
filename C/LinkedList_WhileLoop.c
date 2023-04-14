@@ -51,7 +51,7 @@ int main(){
         printf("Do you want to continue?\n[Y/y](for Yes)\n[Any other key](for No)\n");
         scanf(" %c", &choice);
     }
-
+    while (1){
     printf("What further operation you want to do?\n");
     printf("Choose from following:(Use the serial numbers as choice)\n");
     printf("1) Print the linked list\n");
@@ -64,7 +64,7 @@ int main(){
 
     switch ( operationChoice ){
         case 1: displayLinkedList( start );
-                break;
+                return 0;
         case 2: printf("Enter the year of birth: ");
                 if(scanf(" %d", &year)!=1){      
                 printf("Invalid input");
@@ -85,7 +85,7 @@ int main(){
                 displayLinkedList( start );
                 break;
     }
-
+    }
     free(start);
     return 0;
 }
