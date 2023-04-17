@@ -38,6 +38,7 @@ struct resultant {
 void displayPolynomial( struct polynomial1 *start1, struct polynomial2 *start2 );
 void displayResultant ( struct resultant *start);
 void add(struct polynomial1 *start1, struct polynomial2 *start2);
+void mul(struct polynomial1 *start1, struct  polynomial2 *start2);
 
 
 int main(){
@@ -83,7 +84,7 @@ printf("\nWhat further operation you want to do?\n");
     switch ( operationChoice ){
         case 1: add( start1, start2);
                 break;
-        case 2: //mul();
+        case 2: mul( start1, start2);
 				break;
         default: printf("Wrong input\n");
     }
@@ -146,39 +147,65 @@ void displayPolynomial(struct polynomial1 *start1, struct polynomial2 *start2) {
 
     printf("Polynomials are:\n");
     printf("Polynomial 1: ");
-    while (temp1 != NULL) {
-        if (temp1->coefficient != 0) {
-            if (temp1->coefficient == 1) {
-                printf("x^%d + ", temp1->power);
-            } else if (temp1->power == 0) {
+  while (temp1 != NULL) {
+    if (temp1->coefficient != 0) {
+        if (temp1->coefficient == 1) {
+            if (temp1->power == 0) {
                 printf("%d", temp1->coefficient);
             } else if (temp1->power == 1) {
-                printf("%dx + ", temp1->coefficient);
+                if (temp1->next == NULL || temp1->next->coefficient == 0) {
+                    printf("x");
+                } else {
+                    printf("x + "); 
+                }
             } else {
-                printf("%dx^%d + ", temp1->coefficient, temp1->power);
+                printf("x^%d + ", temp1->power);
             }
+        } else if (temp1->power == 0) {
+            printf("%d", temp1->coefficient);
+        } else if (temp1->power == 1) {
+            if (temp1->next == NULL || temp1->next->coefficient == 0) {
+                printf("%dx", temp1->coefficient);
+            } else {
+                printf("%dx + ", temp1->coefficient);
+            }
+        } else {
+            printf("%dx^%d + ", temp1->coefficient, temp1->power);
         }
-        temp1 = temp1->next;
     }
+    temp1 = temp1->next;
+}
 
     printf("\nPolynomial 2: ");
-    while (temp2 != NULL) {
-        if (temp2->coefficient != 0) {
-            if (temp2->coefficient == 1) {
-				if (temp2->power == 1) {
-                printf("%dx + ", temp2->coefficient);
-				}
-                printf("x^%d + ", temp2->power);
-            } else if (temp2->power == 0) {
+   while (temp2 != NULL) {
+    if (temp2->coefficient != 0) {
+        if (temp2->coefficient == 1) {
+            if (temp2->power == 0) {
                 printf("%d", temp2->coefficient);
             } else if (temp2->power == 1) {
-                printf("%dx + ", temp2->coefficient);
+                if (temp2->next == NULL || temp2->next->coefficient == 0) {
+                    printf("x");
+                } else {
+                    printf("x + ");
+                }
             } else {
-                printf("%dx^%d + ", temp2->coefficient, temp2->power);
+                printf("x^%d + ", temp2->power);
             }
+        } else if (temp2->power == 0) {
+            printf("%d", temp2->coefficient);
+        } else if (temp2->power == 1) {
+            if (temp2->next == NULL || temp2->next->coefficient == 0) {
+                printf("%dx", temp2->coefficient);
+            } else {
+                printf("%dx + ", temp2->coefficient);
+            }
+        } else {
+            printf("%dx^%d + ", temp2->coefficient, temp2->power);
         }
-        temp2 = temp2->next;
     }
+    temp2 = temp2->next;
+}
+
 
     printf("\n");
 }
@@ -242,21 +269,83 @@ void add(struct polynomial1 *start1, struct polynomial2 *start2) {
 
 
 
-void displayResultant ( struct resultant *start){
-	struct resultant *current = start;
-	 printf("Resultant is  : \n");
-	 while (current != NULL) {
+void displayResultant(struct resultant *start) {
+    struct resultant *current = start;
+    while (current != NULL) {
         if (current->coefficient != 0) {
             if (current->coefficient == 1) {
-                printf("x^%d + ", temp1->power);
+                if (current->power == 0) {
+                    printf("%d", current->coefficient);
+                } else if (current->power == 1) {
+                    if (current->next != NULL && current->next->coefficient == 0) {
+                        printf("x ");
+                    } else {
+                        printf("x + ");
+                    }
+                } else {
+                    printf("x^%d + ", current->power);
+                }
             } else if (current->power == 0) {
                 printf("%d", current->coefficient);
             } else if (current->power == 1) {
-                printf("%dx + ", current->coefficient);
+                if (current->next != NULL && current->next->coefficient == 0) {
+                    printf("%dx ", current->coefficient);
+                } else {
+                    printf("%dx + ", current->coefficient);
+                }
             } else {
                 printf("%dx^%d + ", current->coefficient, current->power);
             }
         }
         current = current->next;
     }
+}
+
+
+void mul( struct polynomial1 *start1, struct polynomial2 *start2)
+{   
+    struct polynomial1 *temp1 = start1;
+    struct polynomial2 *temp2 = start2;
+    struct resultant *start = NULL;
+    struct resultant *current = NULL;
+
+    while (temp1 != NULL) {
+        temp2 = start2;
+        while (temp2 != NULL) {
+            int coefficient = temp1->coefficient * temp2->coefficient;
+            int power = temp1->power + temp2->power;
+
+            // Check if a term with the same power already exists in the resultant polynomial
+            struct resultant *check = start;
+            while (check != NULL) {
+                if (check->power == power) {
+                    check->coefficient += coefficient;
+                    break;
+                }
+                check = check->next;
+            }
+
+            // If term with same power does not exist, create a new node in the resultant polynomial
+            if (check == NULL) {
+                struct resultant *newNode = (struct resultant *)malloc(sizeof(struct resultant));
+                newNode->coefficient = coefficient;
+                newNode->power = power;
+                newNode->next = NULL;
+
+                if (start == NULL) {
+                    start = newNode;
+                    current = newNode;
+                } else {
+                    current->next = newNode;
+                    current = current->next;
+                }
+            }
+
+            temp2 = temp2->next;
+        }
+        temp1 = temp1->next;
+    }
+
+    printf("\nResultant Polynomial: ");
+    displayResultant( start );
 }
